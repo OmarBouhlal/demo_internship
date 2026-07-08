@@ -17,7 +17,9 @@ class AgentConfig:
 
 
 def get_api_key() -> str:
-    api_key = os.getenv("GEMINI_API_KEY", "").strip() or os.getenv("GOOGLE_API_KEY", "").strip()
+    api_key = os.getenv("GEMINI_API_KEY", "").strip()
+    if not api_key:
+        api_key = os.getenv("GOOGLE_API_KEY", "").strip()
     if not api_key:
         raise RuntimeError(
             "GEMINI_API_KEY or GOOGLE_API_KEY is required to run the agent workflow."

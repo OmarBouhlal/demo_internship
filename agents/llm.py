@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from google import genai
+from google.genai import types
 
 
 @dataclass
@@ -16,30 +17,30 @@ class GeminiTextGenerator:
         self.model = model
 
     def generate(self, instructions: str, prompt: str) -> LLMResponse:
-        response = self.client.interactions.create(
+        response = self.client.models.generate_content(
             model=self.model,
-            input=(
-                f"{instructions}\n\n"
-                f"{prompt}"
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                systemInstruction=instructions,
+                temperature=0.2,
+                maxOutputTokens=4096,
             ),
         )
 
-        text = getattr(response, "output_text", "") or self._extract_text_from_output(response)
+        text = getattr(response, "text", "") or self._extract_text_from_output(response)
         return LLMResponse(text=text.strip())
 
     @staticmethod
     def _extract_text_from_output(response: object) -> str:
         chunks: list[str] = []
-        output = getattr(response, "output", None)
-        if output:
-            for item in output:
-                if getattr(item, "type", None) != "message":
-                    continue
-                for content in getattr(item, "content", []) or []:
-                    if getattr(content, "type", None) in {"output_text", "text"}:
-                        chunks.append(getattr(content, "text", ""))
-        if not chunks:
-            text = getattr(response, "text", None)
-            if text:
-                chunks.append(str(text))
+        candidates = getattr(response, "candidates", None) or []
+        for candidate in candidates:
+            content = getattr(candidate, "content", None)
+            if not content:
+                continue
+            for part in getattr(content, "parts", []) or []:
+                if getattr(part, "text", None):
+                    chunks.append(str(getattr(part, "text")))
+        if not chunks and getattr(response, "text", None):
+            chunks.append(str(getattr(response, "text")))
         return "".join(chunks)
