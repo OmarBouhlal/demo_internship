@@ -28,6 +28,31 @@ pip install -r requirements.txt
 
 Run the scraper to generate `al_omrane_group.csv`, then run the ETL to load it into PostgreSQL.
 
+## Agent workflow
+
+The project now includes an AI-agent pipeline for the written deliverables:
+
+- exploration agent
+- objective/specification agent
+- analysis and conception agent
+- architecture agent
+- implementation agent
+- deployment agent
+
+Run it with:
+
+```bash
+python -m agents --topic "Reporting Automatisé des Achats Publiques (Holding)"
+```
+
+Required environment variables for the agent workflow:
+
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL` with default `gpt-4.1-mini`
+- `AGENT_OUTPUT_DIR` with default `generated_reports`
+
+The orchestrator writes one markdown file per phase and a final `cahier_de_charge.md`.
+
 ## Notes
 
 - `al_omrane_group.csv` is a generated artifact and is ignored by Git.
