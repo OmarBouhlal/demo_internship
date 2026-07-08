@@ -21,7 +21,7 @@ services:
     # On lance l'API depuis le dossier backend
     command: uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
     environment:
-      DB_HOST: ${DB_HOST:-db}
+      DB_HOST: db
       DB_PORT: ${DB_PORT:-5432}
       DB_NAME: ${DB_NAME:-alomrane_db}
       DB_USER: ${DB_USER:-postgres}
@@ -42,7 +42,7 @@ services:
     # On lance le dashboard depuis le dossier frontend
     command: streamlit run frontend/dashboard.py --server.port 8501 --server.address 0.0.0.0
     environment:
-      API_BASE_URL: ${API_BASE_URL:-http://api:8000}
+      API_BASE_URL: http://api:8000
     volumes:
       - .:/app
     ports:
