@@ -30,7 +30,7 @@ Run the scraper to generate `al_omrane_group.csv`, then run the ETL to load it i
 
 ## Agent workflow
 
-The project now includes an AI-agent pipeline for the written deliverables:
+The project now includes an AI-agent pipeline for the written deliverables, orchestrated with LangGraph:
 
 - exploration agent
 - objective/specification agent
