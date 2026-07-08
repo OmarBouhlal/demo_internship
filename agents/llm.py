@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
 
 from google import genai
 from google.genai import types
+from google.genai.errors import ServerError
 
 
 @dataclass
@@ -17,18 +19,31 @@ class GeminiTextGenerator:
         self.model = model
 
     def generate(self, instructions: str, prompt: str) -> LLMResponse:
-        response = self.client.models.generate_content(
-            model=self.model,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                systemInstruction=instructions,
-                temperature=0.2,
-                maxOutputTokens=4096,
-            ),
-        )
+        response = self._generate_with_retries(instructions, prompt)
 
         text = getattr(response, "text", "") or self._extract_text_from_output(response)
         return LLMResponse(text=text.strip())
+
+    def _generate_with_retries(self, instructions: str, prompt: str):
+        last_error: Exception | None = None
+        for attempt in range(3):
+            try:
+                return self.client.models.generate_content(
+                    model=self.model,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        systemInstruction=instructions,
+                        temperature=0.2,
+                        maxOutputTokens=4096,
+                    ),
+                )
+            except ServerError as exc:
+                last_error = exc
+                status_code = getattr(exc, "status_code", None)
+                if status_code not in {429, 503} or attempt == 2:
+                    raise
+                time.sleep(2 ** attempt)
+        raise last_error or RuntimeError("Gemini generation failed unexpectedly.")
 
     @staticmethod
     def _extract_text_from_output(response: object) -> str:
