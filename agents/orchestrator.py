@@ -8,7 +8,7 @@ from langgraph.graph import END, START, StateGraph
 
 from agents.config import AgentConfig, get_api_key
 from agents.context import ProjectContext, load_project_context
-from agents.llm import OpenAITextGenerator
+from agents.llm import GeminiTextGenerator
 from agents.phases import PHASES
 
 
@@ -41,7 +41,7 @@ class AgentOrchestrator:
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         api_key = get_api_key()
-        self.generator = OpenAITextGenerator(api_key=api_key, model=self.config.model)
+        self.generator = GeminiTextGenerator(api_key=api_key, model=self.config.model)
         self.context = load_project_context(root)
         self.graph = self._build_graph()
 

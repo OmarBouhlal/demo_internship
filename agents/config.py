@@ -12,15 +12,14 @@ load_dotenv()
 
 @dataclass(frozen=True)
 class AgentConfig:
-    model: str = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
+    model: str = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
     output_dir: Path = Path(os.getenv("AGENT_OUTPUT_DIR", "generated_reports"))
 
 
 def get_api_key() -> str:
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    api_key = os.getenv("GEMINI_API_KEY", "").strip() or os.getenv("GOOGLE_API_KEY", "").strip()
     if not api_key:
         raise RuntimeError(
-            "OPENAI_API_KEY is required to run the agent workflow."
+            "GEMINI_API_KEY or GOOGLE_API_KEY is required to run the agent workflow."
         )
     return api_key
-

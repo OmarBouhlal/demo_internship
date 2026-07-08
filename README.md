@@ -47,8 +47,8 @@ python -m agents --topic "Reporting Automatisé des Achats Publiques (Holding)"
 
 Required environment variables for the agent workflow:
 
-- `OPENAI_API_KEY`
-- `OPENAI_MODEL` with default `gpt-4.1-mini`
+- `GEMINI_API_KEY` or `GOOGLE_API_KEY`
+- `GEMINI_MODEL` with default `gemini-3.5-flash`
 - `AGENT_OUTPUT_DIR` with default `generated_reports`
 
 The orchestrator writes one markdown file per phase and a final `cahier_de_charge.md`.
