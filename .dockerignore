@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+.env
+al_omrane_group.csv
+debug_*.html
+debug_*.png
+.git
+.gitignore
+.DS_Store
+*.log
